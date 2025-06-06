@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.YundongmokuaiDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.yundongmokuai_name as yundongmokuaiName
+        ,a.yundongmokuai_photo as yundongmokuaiPhoto
+        ,a.yundongmokuai_age as yundongmokuaiAge
+        ,a.yundongmokuai_kaululi as yundongmokuaiKaululi
+        ,a.yundongmokuai_types as yundongmokuaiTypes
+        ,a.yundongmokuai_content as yundongmokuaiContent
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.YundongmokuaiView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM yundongmokuai  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.yundongmokuaiName != '' and params.yundongmokuaiName != null and params.yundongmokuaiName != 'null' ">
+                and a.yundongmokuai_name like CONCAT('%',#{params.yundongmokuaiName},'%')
+            </if>
+            <if test=" params.yundongmokuaiAge != '' and params.yundongmokuaiAge != null and params.yundongmokuaiAge != 'null' ">
+                and a.yundongmokuai_age like CONCAT('%',#{params.yundongmokuaiAge},'%')
+            </if>
+            <if test="params.yundongmokuaiKaululiStart != null and params.yundongmokuaiKaululiStart != ''">
+                <![CDATA[  and a.yundongmokuai_kaululi >= #{params.yundongmokuaiKaululiStart}   ]]>
+            </if>
+            <if test="params.yundongmokuaiKaululiEnd != null and params.yundongmokuaiKaululiEnd != ''">
+                <![CDATA[  and a.yundongmokuai_kaululi <= #{params.yundongmokuaiKaululiEnd}   ]]>
+            </if>
+             <if test="params.yundongmokuaiKaululi != null and params.yundongmokuaiKaululi != ''">
+                and a.yundongmokuai_kaululi = #{params.yundongmokuaiKaululi}
+             </if>
+            <if test="params.yundongmokuaiTypes != null and params.yundongmokuaiTypes != ''">
+                and a.yundongmokuai_types = #{params.yundongmokuaiTypes}
+            </if>
+            <if test=" params.yundongmokuaiContent != '' and params.yundongmokuaiContent != null and params.yundongmokuaiContent != 'null' ">
+                and a.yundongmokuai_content like CONCAT('%',#{params.yundongmokuaiContent},'%')
+            </if>
+
+        </where>
+
+        order by a.${params.orderBy} desc 
+    </select>
+
+</mapper>
